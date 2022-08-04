@@ -17,6 +17,9 @@ def index(request):
     return render(request, 'index.html')
 
 def loginPage(request): 
+    if request.user.is_authenticated:
+        return redirect('index')
+
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -35,7 +38,9 @@ def logoutUser(request):
     return redirect('login')
 
 def register(request): 
-
+    if request.user.is_authenticated:
+        return redirect('index')
+        
     if request.method == "POST":
         user = User.objects.create(username=request.POST['username'], email=request.POST['email'], password=make_password(request.POST['password1']))
         Account.objects.create(name=request.POST['name'], profile_pic = request.FILES['profile_pic'], user=user, phone=request.POST['phone'], password=request.POST['password1'])
