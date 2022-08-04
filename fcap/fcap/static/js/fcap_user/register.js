@@ -1,16 +1,15 @@
-var form_fields = document.getElementsByTagName('input')
-const usernameFeedback = document.querySelector(".username_feedback")
+const usernameFeedback = document.querySelector(".username_feedback");
+const emailFeedback = document.querySelector(".email_feedback");
+const nameFeedback = document.querySelector(".name_feedback");
+const confirmPasswordFeedback = document.querySelector(".confirmPassword_feedback");
 
-const emailFeedback = document.querySelector(".email_feedback")
-const nameFeedback = document.querySelector(".name_feedback")
-const confirmPasswordFeedback = document.querySelector(".confirmPassword_feedback")
+nameField = document.querySelector("#name");
+usernameField =  document.querySelector("#username");
+emailField =  document.querySelector("#email");
+passwordField =  document.querySelector("#password1");
+confirmPasswordField = document.querySelector("#password2");
+submitButton =  document.querySelector("#submit_button");
 
-nameField = form_fields[0];
-usernameField = form_fields[1];
-emailField = form_fields[2];
-passwordField = form_fields[3];
-confirmPasswordField = form_fields[4];
-submitButton = form_fields[5];
 
 nameField.addEventListener("keyup", (e) => {
     const nameVal = e.target.value; 
@@ -86,6 +85,7 @@ emailField.addEventListener("keyup", (e) => {
 confirmPasswordField.addEventListener("keyup", (e) => {
     pass = e.target.value; 
     confirmPasswordFeedback.style.display = "none"; 
+    console.log("hhhh", 111)
     confirmPasswordFeedback.classList.remove("is-invalid");
     if (pass != passwordField.value)
     {
@@ -96,5 +96,5 @@ confirmPasswordField.addEventListener("keyup", (e) => {
     }
     else 
         submitButton.removeAttribute("disabled");
-})
+});
 
