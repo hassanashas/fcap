@@ -14,8 +14,9 @@ class Account(models.Model):
 
 class Match(models.Model):
 
-    player1 = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='player1')
-    player2 = models.ForeignKey(Account, on_delete=models.CASCADE, related_name = 'player2')
     match_time = models.DateTimeField(null=True)
-    player1_points = models.FloatField(null=True)
-    player2_points = models.FloatField(null=True)
+
+class Participant(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey(Account, on_delete=models.CASCADE)
+    player_points = models.FloatField(null=True)

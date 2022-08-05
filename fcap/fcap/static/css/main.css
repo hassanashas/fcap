@@ -50,3 +50,10 @@
   }
 
   
+  .nav_user {
+    font-size: 18px; 
+    color: #fff;
+    margin-right: 5px;
+  }
+
+  .img-profile{height:2rem;width:2rem}

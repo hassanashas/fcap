@@ -14,7 +14,16 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='login')
 def index(request): 
-    return render(request, 'index.html')
+    context = {
+    }
+    return render(request, 'user/dashboard.html', context)
+
+@login_required(login_url = 'login')
+def add_match(request):
+    accounts = Account.objects.all()
+
+    return render(request, 'matches/add_match.html')
+
 
 def loginPage(request): 
     if request.user.is_authenticated:
@@ -40,7 +49,7 @@ def logoutUser(request):
 def register(request): 
     if request.user.is_authenticated:
         return redirect('index')
-        
+
     if request.method == "POST":
         user = User.objects.create(username=request.POST['username'], email=request.POST['email'], password=make_password(request.POST['password1']))
         Account.objects.create(name=request.POST['name'], profile_pic = request.FILES['profile_pic'], user=user, phone=request.POST['phone'], password=request.POST['password1'])
