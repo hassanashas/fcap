@@ -14,7 +14,11 @@ from django.contrib import messages
 from django.utils.timezone import make_aware
 from datetime import datetime
 from django.db.models import Avg, Count, Min, Sum
+import numpy as np 
+from multielo import MultiElo
 
+from collections import Counter # For Duplicate Finding 
+rank_system = MultiElo()
 
 # Create your views here.
 
@@ -40,48 +44,54 @@ def add_match(request):
     if request.method == "POST": 
         totalPlayers = int(request.POST['players']) + 1
         # Error Checking 
-        for index in range(1, totalPlayers):
-            username = request.POST['player_select' + str(index)]
-            player_score = request.POST['player_score' + str(index)]
-            if username == "None":
-                messages.warning(request, "Player Name can't be empty")
-                return render(request, 'matches/add_match.html', context)
-            if not player_score:
-                messages.warning(request, "Player Points can't be empty")
-                return render(request, 'matches/add_match.html', context)
-            player_score = int(player_score)
-            if player_score < 0 or player_score > 120:
-                messages.warning(request, "Player Points must be between 0 and 120")
-                return render(request, 'matches/add_match.html', context)
-
-        # Match Creation
-        match = Match.objects.create(totalPlayers=totalPlayers-1, match_time=make_aware(datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')))
-        
         players_list = [] 
-        players_scores = []
         for index in range(1, totalPlayers):
             username = request.POST['player_select' + str(index)]
             player_score = request.POST['player_score' + str(index)]
             
+            if username == "None":
+                messages.error(request, "Player Name can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            if not player_score:
+                messages.error(request, "Player Points can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            player_score = int(player_score)
+            if player_score < 0 or player_score > 120:
+                messages.error(request, "Player Points must be between 0 and 120")
+                return render(request, 'matches/add_match.html', context)
             part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
-            players_list.append(part_account)
-            players_scores.append(player_score)
+            players_list.append((part_account, player_score))
+
+        if findDuplicate([i[0] for i in players_list]):
+            messages.error(request, "All Players must be Unique in the Match")
+            return render(request, 'matches/add_match.html', context)
+
+        # Match Creation
+        match = Match.objects.create(totalPlayers=totalPlayers-1, match_time=make_aware(datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')))
+        
+        
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = int(request.POST['player_score' + str(index)])
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
             Participant.objects.create(match=match, player = part_account, player_points = player_score)
 
         
-        # Getting the Winner of the Game 
-        winner = players_list[players_scores.index(max(players_scores))]
-        print("Players List: ")
-        for p in players_list: 
-            print(p.name, end = ", ")
-        print("\n")
-        print("Player Scores: ", players_scores)
-        print("Winner: ", winner.name)
-        print(max(players_scores))
-        print("Index: ", players_scores.index(max(players_scores)))
-        print("Winner: ", players_list[players_scores.index(max(players_scores))])
+        # Getting the Winner of the Game
+        players_list.sort(key = lambda x: x[1], reverse=True)
+        winner = players_list[0][0]
         match.winner = winner
         match.save()
+        
+        # Getting new Ratings for Players 
+        temp_list = []
+        for player in players_list:
+            temp_list.append(player[0].ratings)
+        points_array = np.array(temp_list)
+        new_rank = rank_system.get_new_ratings(points_array)
+        for index in range(0, len(new_rank)):
+            players_list[index][0].ratings = round(new_rank[index], 2)
+            players_list[index][0].save()
         messages.success(request, "Match has been successfully added")
         return redirect('index')
 
@@ -169,3 +179,9 @@ class NameVerification(View):
         
         return JsonResponse({"name_valid": True})
         
+
+def findDuplicate(players_list):
+    for k, v in Counter(players_list).items():
+        if v > 1:
+            return True
+    return False 

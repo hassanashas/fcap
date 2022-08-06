@@ -43,10 +43,13 @@
                 <div id = "add_match_forms" class = "mt-3">
                     
                 </div>
-                <input type="submit" value="Submit" id = "submit_button" class="btn btn-primary btn-primary-sm"/>
+                
+                <input type="submit" value="Add Match" id = "submit_button" class="mt-4 btn btn-success btn-success-sm float-end"/>
             </form>
 
-                
+                {% comment %} <div hidden class = "alert alert-sm alert-danger" id = "select_empty">You must select all the players.</div>
+                <div hidden class = "alert alert-sm alert-danger" id = "select_duplicate">Two or more players can't be same.</div>
+                <div hidden class = "alert alert-sm alert-danger" id = "select_empty">All players must have points between 0 to 120.</div> {% endcomment %}
         </div>
 
     </div>

@@ -20,6 +20,8 @@
                     <th>Rank</th>
                     <th>Player Name</th>
                     <th>Matches</th>
+                    {% comment %} <th>Total Points</th>
+                    <th>Matches Won</th> {% endcomment %}
                     <th>Ratings</th>
                 </tr>
             </thead>
@@ -35,8 +37,10 @@
                         <tr>
                     {% endif %} 
                         <td>{{forloop.counter}}</td>
-                        <td><img class="img-profile rounded-circle" src="{{player.profile_pic.url}}">   {{player.name}}</td>
+                        <td><img class="img-profile rounded-circle" src="{{player.profile_pic.url}}">        {{player.name}}</td>
                         <td>{{player.matches}}</td>
+                        {% comment %} <td>{{player.total_points}}</td>
+                        <td>{{player.matches_won}}</td> {% endcomment %}
                         <td>{{player.ratings}}</td>
                         </tr>
                     

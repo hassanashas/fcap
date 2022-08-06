@@ -12,6 +12,8 @@ players.addEventListener("keyup", (e) => {
     const number = e.target.value; 
    
     add_match_forms.innerHTML = "";
+    var select_forms = []
+    var points_forms = []
     for (let i = 1; i <= number; i++)
     {
         var iDiv = document.createElement('div');
@@ -53,6 +55,43 @@ players.addEventListener("keyup", (e) => {
         iDiv.append(player_select); 
         iDiv.append(player_score_label)
         iDiv.appendChild(player_score_input);
+
+        // Appending to the IDs array 
+        select_forms.push("player_score" + i)
+        points_forms.push("player_select" + i)
         // addMatchForm.append(newElement);
     }
 });
+
+// function addFormValidations(select_forms, points_forms)
+// {
+//     var select_form_duplicate = true;
+//     var select_form_empty = true;  
+//     for (const select_form in select_forms)
+//     {
+//         select_form.addEventListener("keyup", (e)=> {
+//             console.log("heeeeeeeelll");
+//             if (select_form.value == "None")
+//             {
+//                 select_form_empty = false; 
+//             }
+//             for (const temp in select_forms)
+//             {
+//                 if (temp != select_form)
+//                 {
+//                     if (temp.value == select_form.value)
+//                     {
+//                         select_form_duplicate = false;
+//                     }
+//                 }
+//             }
+//         });
+//     }
+
+//     if (select_form_empty == true)
+//     {
+//         document.getElementById('select_empty').hidden = true; 
+//     }
+//     else 
+//         document.getElementById('select_empty').hidden = true; 
+// }
