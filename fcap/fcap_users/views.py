@@ -6,23 +6,85 @@ from validate_email import validate_email
 from django.contrib.auth.models import User
 from .forms import AccountForm, UserForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Account
+from .models import Account, Participant, Match
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
+import json 
+from django.contrib import messages
+from django.utils.timezone import make_aware
+from datetime import datetime
+
 
 # Create your views here.
 
 @login_required(login_url='login')
 def index(request): 
+    matches = Match.objects.all()
     context = {
+        'matches': matches
     }
     return render(request, 'user/dashboard.html', context)
 
 @login_required(login_url = 'login')
 def add_match(request):
     accounts = Account.objects.all()
+    accounts_list = []
+    for account in accounts:
+        accounts_list.append((account.name, account.user.username))
+    accounts = json.dumps(accounts_list)
+    context = {
+        "accounts": accounts
+    }
 
-    return render(request, 'matches/add_match.html')
+    if request.method == "POST": 
+        totalPlayers = int(request.POST['players']) + 1
+        # Error Checking 
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = request.POST['player_score' + str(index)]
+            if username == "None":
+                messages.warning(request, "Player Name can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            if not player_score:
+                messages.warning(request, "Player Points can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            player_score = int(player_score)
+            if player_score < 0 or player_score > 120:
+                messages.warning(request, "Player Points must be between 0 and 120")
+                return render(request, 'matches/add_match.html', context)
+
+        # Match Creation
+        match = Match.objects.create(totalPlayers=totalPlayers-1, match_time=make_aware(datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')))
+        
+        players_list = [] 
+        players_scores = []
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = request.POST['player_score' + str(index)]
+            
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
+            players_list.append(part_account)
+            players_scores.append(player_score)
+            Participant.objects.create(match=match, player = part_account, player_points = player_score)
+
+        
+        # Getting the Winner of the Game 
+        winner = players_list[players_scores.index(max(players_scores))]
+        print("Players List: ")
+        for p in players_list: 
+            print(p.name, end = ", ")
+        print("\n")
+        print("Player Scores: ", players_scores)
+        print("Winner: ", winner.name)
+        print(max(players_scores))
+        print("Index: ", players_scores.index(max(players_scores)))
+        print("Winner: ", players_list[players_scores.index(max(players_scores))])
+        match.winner = winner
+        match.save()
+        messages.success(request, "Match has been successfully added")
+        return redirect('index')
+
+    return render(request, 'matches/add_match.html', context)
 
 
 def loginPage(request): 

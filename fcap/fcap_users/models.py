@@ -15,6 +15,12 @@ class Account(models.Model):
 class Match(models.Model):
 
     match_time = models.DateTimeField(null=True)
+    totalPlayers = models.IntegerField(default=2)
+    winner = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+
+        ordering = ['-match_time']
 
 class Participant(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)

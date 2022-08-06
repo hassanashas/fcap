@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+    
     <div class="container mt-5">
+        {% include 'partials/_messages.html' %}
         <div class="row">
             <div class="col-md-10">
                 <nav aria-label="breadcrumb">
@@ -21,13 +22,18 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Player One</th>
-                        <th>Player Two</th>
+                        <th>Total Players</th>
                         <th>Winner</th>
                     </tr>
                 </thead>
                 <tbody>
-
+                    {% for match in matches %}
+                        <tr>
+                            <td>{{match.match_time}}</td>
+                            <td>{{match.totalPlayers}}</td>
+                            <td>{{match.winner.name}}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
