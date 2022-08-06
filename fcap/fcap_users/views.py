@@ -13,6 +13,7 @@ import json
 from django.contrib import messages
 from django.utils.timezone import make_aware
 from datetime import datetime
+from django.db.models import Avg, Count, Min, Sum
 
 
 # Create your views here.
@@ -85,6 +86,16 @@ def add_match(request):
         return redirect('index')
 
     return render(request, 'matches/add_match.html', context)
+
+
+
+def rankings(request):
+    players = Account.objects.all() 
+    players = Account.objects.annotate(matches=Count('participant')).order_by('-ratings')
+    context = {
+        'players': players
+    }
+    return render(request, 'matches/rankings.html', context)
 
 
 def loginPage(request): 

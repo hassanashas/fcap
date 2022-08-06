@@ -19,7 +19,6 @@ class Match(models.Model):
     winner = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-
         ordering = ['-match_time']
 
 class Participant(models.Model):
