@@ -72,7 +72,7 @@
 		<div class="d-flex justify-content-center h-100">
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
-					<h3 id="form-title">Register your FCAP Account</h3>
+					<h3 id="form-title">Register FCAP Account</h3>
 				</div>
 				<div class="d-flex justify-content-center form_container">
 
@@ -90,23 +90,26 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input required type="text" name="username" id="username" class="form-control" placeholder="Username">
+							<input required type="text" name="username" pattern="[0-9]{2}[A-Z][-][0-9]{4}" id="username" class="form-control" placeholder="Roll Number (e.g. 18F-0128)"
+							oninvalid="this.setCustomValidity('Please Write in the Correct Format, i.e. (18F-0128)')" oninput="this.setCustomValidity('')">
 						</div>
                         <div class="username_feedback text-danger font-weight-bold" style="display:none"></div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
 							</div>
-							<input required type="email" name="email" id="email" class="form-control" placeholder="FAST NU Email Address">
+							<input required type="email" name="email" pattern="[f][0-9]{6}@nu\.edu\.pk" id="email" class="form-control" placeholder="FAST NU Email Address"
+							oninvalid="this.setCustomValidity('Please Enter your NU Email Addres (e.g. f180128@nu.edu.pk')" oninput="this.setCustomValidity('')">
 						</div>
-                        <div class="phone_feedback text-danger font-weight-bold" style="display:none"></div>
+                        <div class="email_feedback text-danger font-weight-bold" style="display:none"></div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
 							</div>
-							<input required type="text" name="phone" id="phone" class="form-control" placeholder="Phone Number">
+							<input required type="text" name="phone" pattern="[0][3][0-9]{9}" id="phone" class="form-control" placeholder="Phone Number"
+							oninvalid="this.setCustomValidity('Please Enter Phone in Correct Format (e.g. 03331234567')" oninput="this.setCustomValidity('')">
 						</div>
-                        <div class="email_feedback text-danger font-weight-bold" style="display:none"></div>
+                        <div class="phone_feedback text-danger font-weight-bold" style="display:none"></div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
@@ -124,7 +127,7 @@
                         <div class="input-group mb-2">
 							<div class="input-group-append">
 							</div>
-                            <label for="profile_picture" class="form-control btn btn-secondary ml-4">Upload Profile Picture (Optional)</label>
+                            <label for="profile_picture" id = "profile_picture_label" class="form-control btn btn-secondary ml-4">Upload Profile Picture (Optional)</label>
 							<input id="profile_picture" type="file" class="form-control" style="display:none" name="profile_pic">
 						</div>
 				   		<div class="d-flex justify-content-center mt-3 login_container">

@@ -74,8 +74,9 @@
 				<div class="d-flex justify-content-center">
 					<h3 id="form-title">Login</h3>
 				</div>
+				{% include 'partials/_messages.html' %}
 				<div class="d-flex justify-content-center form_container">
-
+					
 					<form method="POST" action="{% url 'login' %}">
                         {% csrf_token %}
 						
@@ -83,7 +84,7 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input required type="text" name="username" id="username" class="form-control" placeholder="Username">
+							<input required type="text" name="username" id="username" class="form-control" placeholder="Roll No (i.e. 18F-0128)">
 						</div>
                         <div class="username_feedback text-danger font-weight-bold" style="display:none"></div>
 						

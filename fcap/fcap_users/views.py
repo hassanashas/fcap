@@ -32,7 +32,7 @@ def index(request):
 
 @login_required(login_url = 'login')
 def add_match(request):
-    accounts = Account.objects.all()
+    accounts = Account.objects.all().order_by('user__username')
     accounts_list = []
     for account in accounts:
         accounts_list.append((account.name, account.user.username))
@@ -101,7 +101,8 @@ def add_match(request):
 
 def rankings(request):
     players = Account.objects.all() 
-    players = Account.objects.annotate(matches=Count('participant')).order_by('-ratings')
+    players = Account.objects.annotate(matches=Count('participant', distinct=True), total_points=Sum('participant__player_points'),
+    matches_won = Count('match', distinct=True)).order_by('-ratings')
     context = {
         'players': players
     }
@@ -118,15 +119,18 @@ def loginPage(request):
 
         user = authenticate(request, username=username, password=password)
 
-        print(username, password, user)
 
         if user is not None: 
             login(request, user)
             return redirect('index')
+        else: 
+            messages.error(request, "Invalid Roll No or Password")
+            return render(request, 'user/login.html')
     return render(request, 'user/login.html')
 
 def logoutUser(request):
     logout(request)
+    messages.success(request, "You have been Logged Out")
     return redirect('login')
 
 def register(request): 
@@ -136,6 +140,9 @@ def register(request):
     if request.method == "POST":
         user = User.objects.create(username=request.POST['username'], email=request.POST['email'], password=make_password(request.POST['password1']))
         Account.objects.create(name=request.POST['name'], profile_pic = request.FILES['profile_pic'], user=user, phone=request.POST['phone'], password=request.POST['password1'])
+
+        messages.success(request, "Account has been successfully created. Login to Continue")
+        return redirect('login')
 
 
     context = {}

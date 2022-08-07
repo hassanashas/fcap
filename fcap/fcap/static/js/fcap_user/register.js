@@ -3,6 +3,8 @@ const emailFeedback = document.querySelector(".email_feedback");
 const nameFeedback = document.querySelector(".name_feedback");
 const confirmPasswordFeedback = document.querySelector(".confirmPassword_feedback");
 
+profilePicLabel = document.getElementById('profile_picture_label');
+profilePicField = document.getElementById('profile_picture');
 nameField = document.querySelector("#name");
 usernameField =  document.querySelector("#username");
 emailField =  document.querySelector("#email");
@@ -98,3 +100,9 @@ confirmPasswordField.addEventListener("keyup", (e) => {
         submitButton.removeAttribute("disabled");
 });
 
+
+profilePicLabel.addEventListener('change', (e) => {
+    console.log("hhhhh");
+    profilePicLabel.innerHTML("File Uploaded"); 
+    profilePicLabel.classList = "form-control btn btn-success ml-4";
+})
