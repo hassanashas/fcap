@@ -1,5 +1,8 @@
-from django.urls import path 
-from . import views
+from django.urls import path
+
+from fcap.fcap_users.views.challenges_views import challenge 
+from .views import views
+from .views import challenges_views
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -15,5 +18,6 @@ urlpatterns = [
     path('validate_name', csrf_exempt(views.NameVerification.as_view()), name='validate_name'),
     path('api/data', views.getData, name='api-data'),
     path('api/chart/data', views.AccountNames.as_view()),
+    path('api/users/points_history', views.AccountPointsHistory.as_view()),
     path('logout', views.logoutUser, name='logout'),
 ]

@@ -81,31 +81,9 @@
             </div>
         </div>
 
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <canvas id="myChart" class = "chart-container" style="position: relative; height:40vh; width:80vw"></canvas>
 
-       <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-  </button>
-  
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
+      
     </div> 
 
 {% endblock %}
@@ -113,15 +91,15 @@
 
 {% block script %}
 <script>
-var endpoint = '/api/data';
+var endpoint = '/api/users/points_history';
 var labels = []
-var data = []
+var defaultdata = []
 $.ajax({
     method:"GET", 
     url: endpoint, 
     success: function(data) {
-        labels = data.labels; 
-        data = data.data;
+        labels = data.time; 
+        defaultdata = data.data;
         makeGraph();
     }, 
     error: function(error_data) {
@@ -134,10 +112,10 @@ function makeGraph() {
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: labels,
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: "{{request.user.account.name}}'s Player Points",
+                data: defaultdata,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',

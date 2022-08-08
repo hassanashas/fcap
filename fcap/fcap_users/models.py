@@ -27,3 +27,11 @@ class Participant(models.Model):
     player_points = models.FloatField(null=True)
     player_prev_ratings = models.FloatField(null=True)
     player_new_ratings = models.FloatField(null=True)
+
+class Challenge(models.Model):
+    match_time = models.DateTimeField(null=True)
+    status = models.CharField(max_length=100, default="pending")
+
+class Challenge_Participant(models.Model):
+    player = models.ForeignKey(Account, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
