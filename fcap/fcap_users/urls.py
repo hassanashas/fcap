@@ -1,6 +1,5 @@
 from django.urls import path
 
-from fcap.fcap_users.views.challenges_views import challenge 
 from .views import views
 from .views import challenges_views
 from django.views.decorators.csrf import csrf_exempt
