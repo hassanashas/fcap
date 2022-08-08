@@ -18,7 +18,8 @@ from django.db.models.expressions import Window
 from django.db.models.functions import Rank
 import numpy as np 
 from multielo import MultiElo
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from collections import Counter # For Duplicate Finding 
 rank_system = MultiElo()
 
@@ -217,3 +218,36 @@ def findDuplicate(players_list):
         if v > 1:
             return True
     return False 
+
+
+def getData(request):
+    data = {
+        "sales": 100,
+        "customers": 10,
+    }
+    return JsonResponse(data)
+
+
+class AccountNames(APIView):
+    """
+    View to list all users in the system.
+
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users.
+        """
+        accounts = [account.name for account in Account.objects.all()]
+        labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
+        data = [12, 19, 3, 5, 2, 3]
+        # usernames = [user.username for user in User.objects.all()]
+        data = {
+                "data": data,
+                "labels": labels,
+            }
+        return Response(data)

@@ -13,5 +13,7 @@ urlpatterns = [
     path('validate_email', csrf_exempt(views.EmailVerification.as_view()), name='validate_email'),
     path('validate_username', csrf_exempt(views.UsernameVerification.as_view()), name='validate_username'),
     path('validate_name', csrf_exempt(views.NameVerification.as_view()), name='validate_name'),
+    path('api/data', views.getData, name='api-data'),
+    path('api/chart/data', views.AccountNames.as_view()),
     path('logout', views.logoutUser, name='logout'),
 ]
