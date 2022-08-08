@@ -25,3 +25,5 @@ class Participant(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     player = models.ForeignKey(Account, on_delete=models.CASCADE)
     player_points = models.FloatField(null=True)
+    player_prev_ratings = models.FloatField(null=True)
+    player_new_ratings = models.FloatField(null=True)

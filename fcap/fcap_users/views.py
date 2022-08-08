@@ -13,7 +13,9 @@ import json
 from django.contrib import messages
 from django.utils.timezone import make_aware
 from datetime import datetime
-from django.db.models import Avg, Count, Min, Sum
+from django.db.models import Avg, Count, Min, Sum, F
+from django.db.models.expressions import Window
+from django.db.models.functions import Rank
 import numpy as np 
 from multielo import MultiElo
 
@@ -21,6 +23,24 @@ from collections import Counter # For Duplicate Finding
 rank_system = MultiElo()
 
 # Create your views here.
+
+
+@login_required(login_url='login')
+def dashboard(request):
+    player = Account.objects.get(user = request.user)
+    player_rank = Account.objects.filter(ratings__gte=player.ratings).count()
+    matches_won = Match.objects.filter(winner = player).count()
+    matches_played = Participant.objects.filter(player = player).count()
+    # print(player.rank, player.name, player.user.username)
+    context = {
+        'player': player, 
+        'player_rank': player_rank, 
+        'matches_won': matches_won, 
+        'matches_played': matches_played
+    }
+
+    return render(request, 'user/user_dashboard.html', context)
+
 
 @login_required(login_url='login')
 def index(request): 
@@ -69,12 +89,14 @@ def add_match(request):
         # Match Creation
         match = Match.objects.create(totalPlayers=totalPlayers-1, match_time=make_aware(datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')))
         
-        
+        players_list = [] 
         for index in range(1, totalPlayers):
             username = request.POST['player_select' + str(index)]
             player_score = int(request.POST['player_score' + str(index)])
             part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
-            Participant.objects.create(match=match, player = part_account, player_points = player_score)
+            participant = Participant.objects.create(match=match, player = part_account, player_points = player_score, 
+                                                        player_prev_ratings=part_account.ratings)
+            players_list.append((part_account, player_score, participant))
 
         
         # Getting the Winner of the Game
@@ -92,6 +114,9 @@ def add_match(request):
         for index in range(0, len(new_rank)):
             players_list[index][0].ratings = round(new_rank[index], 2)
             players_list[index][0].save()
+            # Saving the Participant's new ratings. 
+            players_list[index][2].player_new_ratings = round(new_rank[index], 2)
+            players_list[index][2].save()
         messages.success(request, "Match has been successfully added")
         return redirect('index')
 
