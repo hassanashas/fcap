@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'challenges' %}">Challenges</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add New Challenge Challenges</li>
+            </ol>
+        </nav>
+       
+    </div>
+    
+
+    <div class="card">
+        <div class="card-header"></div>
+
+        <div class="card-body">
+        {% include 'partials/_messages.html' %}
+        <form action="{% url 'add_new_challenge' %}" method="post" id = "add_challenge_form">
+            {% csrf_token %}
+            
+            <div class="form-group mb-3">
+                <label for="">Number of Players</label>
+                <input type="number" class="form-control form-control-sm" name="players" id = "players" value=""/>
+            </div>
+            <div class="form-group mb-3">
+                <label for="">Challenge Start Date and Time</label>
+                <input type="datetime-local" class="form-control form-control-sm" name="date" id = "date" value=""/>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Challenge End Date and Time</label>
+                <input disabled type="datetime-local" class="form-control form-control-sm" name="end_date" id = "end_date" value=""/>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Challenge Expiry Time</label>
+                <input type="datetime-local" class="form-control form-control-sm" name="expiry_date" id = "expiry_date" value=""
+                style="pointer-events: none; background-color:#E9ECEF"/>
+            </div>
+            <div id = "add_challenge_forms" class = "mt-3">
+                
+            </div>
+            
+            <input type="submit" value="Make New Challenge" id = "submit_button" class="mt-4 btn btn-success btn-success-sm float-end"/>
+        </form>
+
+            
+    </div>
+
+</div>
+
+<script src = {% static 'js/matches/add_challenge.js' %}></script>
+
+{% endblock content %}

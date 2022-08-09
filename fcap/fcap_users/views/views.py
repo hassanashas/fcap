@@ -266,3 +266,17 @@ class AccountPointsHistory(APIView):
         }
 
         return Response(data)
+
+class GetAllPlayers(APIView):
+    def get(self, request, format=None):
+        accounts = Account.objects.all().order_by('user__username')
+        players_list = []
+        for account in accounts:
+            if not account.user == request.user:
+                players_list.append((account.name, account.user.username))
+        
+        data = {
+            'data': players_list
+        }
+
+        return Response(data)

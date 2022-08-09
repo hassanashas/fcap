@@ -12,8 +12,7 @@ players.addEventListener("keyup", (e) => {
     const number = e.target.value; 
    
     add_match_forms.innerHTML = "";
-    var select_forms = []
-    var points_forms = []
+
     for (let i = 1; i <= number; i++)
     {
         var iDiv = document.createElement('div');
@@ -56,10 +55,7 @@ players.addEventListener("keyup", (e) => {
         iDiv.append(player_score_label)
         iDiv.appendChild(player_score_input);
 
-        // Appending to the IDs array 
-        select_forms.push("player_score" + i)
-        points_forms.push("player_select" + i)
-        // addMatchForm.append(newElement);
+
     }
 });
 
