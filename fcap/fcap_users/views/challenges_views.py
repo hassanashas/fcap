@@ -58,15 +58,54 @@ def add_new_challenge(request):
     return render(request, 'matches/add_new_challenge.html')
 
 
-# class GetPlayerChallenges(APIView):
-#     def get(self, request, format=None):
-#         challenges = Challenge.objects.filter(created_by = request.user.account).values()
-#         challenges_list = []
-#         for challenge in challenges: 
-#             challenges_list.append(challenge)
-        
-#         data = {
-#             'challenges': challenges_list
-#         }
+def challenge_requests(request):
+    challenges_list = Challenge.objects.exclude(created_by = request.user.account)
+    challenges = [] 
+    player = []
+    for challenge in challenges_list:
+        try:
+            ch = Challenge_Participant.objects.get(challenge = challenge, player = request.user.account)
+        except:
+            ch = None
+        if ch:
+            challenges.append(challenge)
+            player.append(ch)
+    
+    
+    context = {
+        'challenges': challenges,
+        'player': player
+    }
+    # print(challenges)
+    return render(request, 'matches/challenge_requests.html', context)
 
-#         return Response(data)
+def get_challenge(request, pk):
+    challenge = Challenge.objects.get(id = pk)
+    challengers = Challenge_Participant.objects.filter(challenge = challenge)
+
+    context = {
+        'challenge': challenge,
+        'challengers': challengers
+    }
+    fh = False 
+    for challenger in challengers: 
+        if challenger.status == 'rejected':
+            messages.error("Challenge has been Rejected by one or more of the Challengers. ")
+            fh = True 
+            break
+    
+    if not fh: 
+        for challenger in challengers:
+            if challenge.status != 'accepted':
+                fh = False
+    if not fh:
+        messages.warning(request, "Awaiting the Response of Challengers. All Challengers must respond by " + str(challenge.expiry_time) + "\
+            , otherwise the challenge will be removed. ")
+    else:
+        messages.success(request, "All Challengers have accepted the Challenge! \n"\
+            "Please make the Payment of Rs. " + str(len(challengers) * 50) + " /= to the following account to Schedule your Challenge"\
+                "\nName: Samman Nasir\nEasypaisa Jazzcash\nNumber: 03331234567\n"\
+                "\nAfter the payment, send the screenshot to the given number.")
+
+        
+    return render(request, 'matches/challenge.html', context)

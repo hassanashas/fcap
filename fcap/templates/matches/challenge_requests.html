@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+    {% include 'partials/_messages.html' %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'challenges' %}">Challenges</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Challenge Requests</li>
+                </ol>
+            </nav>
+        </div>
+       
+    </div>
+    
+    <div id = "challenges_list" class = "mt-3">
+        {% for challenge in challenges %}
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header bg-warning text-white lead">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <span>Challenge #{{challenge.id}}</span>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <span>Time: {{challenge.match_time}}</span>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span>Expires on: {{challenge.expiry_time}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body lead">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <span>Total Challengers: {{challenge.totalPlayers}}</span>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <span>Status: <span class = "text-uppercase">{{challenge.status}}</span></span>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span>Challenged by: {{challenge.created_by.name}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <span>Status: <span class = "text-uppercase">{{challenge.status}}</span></span>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script src = {% static 'js/matches/challenges.js' %}></script>
+
+{% endblock content %}
+

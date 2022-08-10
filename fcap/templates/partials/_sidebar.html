@@ -69,6 +69,14 @@
             Your Challenges
           </a>
         </li>
+
+        {% url 'challenge_requests' as challenge_requests_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == challenge_requests_url %}active{% endif %}" href="{{challenge_requests_url}}">
+            <span data-feather="file-text" class="align-text-bottom"></span>
+            Challenge Requests
+          </a>
+        </li>
         
       </ul>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
