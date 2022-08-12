@@ -21,7 +21,6 @@ from multielo import MultiElo
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from collections import Counter # For Duplicate Finding 
-rank_system = MultiElo()
 
 # Create your views here.
 
@@ -111,6 +110,11 @@ def add_match(request):
         for player in players_list:
             temp_list.append(player[0].ratings)
         points_array = np.array(temp_list)
+        # Creating a MultiElo Instance 
+        n = len(points_array)
+        out = np.sum(points_array * np.arange(n-1, -n, -2) ) / (n*(n-1) / 2)
+        rank_system = MultiElo(k_value = 32 + (out/5))
+
         new_rank = rank_system.get_new_ratings(points_array)
         for index in range(0, len(new_rank)):
             players_list[index][0].ratings = round(new_rank[index], 2)
