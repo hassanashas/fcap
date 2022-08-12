@@ -26,7 +26,15 @@
         <div class="row">
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header bg-warning text-white lead">
+                    {% if challenge.status == 'accepted' %}
+                    <div class="card-header bg-success text-white lead">
+                    {% elif challenge.status == 'rejected' %}
+                    <div class="card-header bg-danger text-white lead">
+                    {% elif challenge.status == 'scheduled' %}
+                    <div class="card-header bg-info text-white lead">
+                    {% else %}
+                    <div class="card-header bg-secondary text-white lead">
+                    {% endif %}
                         <div class="row">
                             <div class="col-md-4">
                                 <span>Challenge #{{challenge.id}}</span>
@@ -48,7 +56,7 @@
                                 <span>Status: <span class = "text-uppercase">{{challenge.status}}</span></span>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href="" class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
+                                <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>

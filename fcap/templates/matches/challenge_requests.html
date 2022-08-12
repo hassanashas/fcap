@@ -20,11 +20,19 @@
     </div>
     
     <div id = "challenges_list" class = "mt-3">
-        {% for challenge in challenges %}
+        {% for challenge, player in challenges %}
         <div class="row">
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header bg-warning text-white lead">
+                    {% if challenge.status == 'accepted' %}
+                    <div class="card-header bg-success text-white lead">
+                    {% elif challenge.status == 'rejected' %}
+                    <div class="card-header bg-danger text-white lead">
+                    {% elif challenge.status == 'scheduled' %}
+                    <div class="card-header bg-info text-white lead">
+                    {% else %}
+                    <div class="card-header bg-secondary text-white lead">
+                    {% endif %}
                         <div class="row">
                             <div class="col-md-4">
                                 <span>Challenge #{{challenge.id}}</span>
@@ -49,16 +57,60 @@
                                 <span>Challenged by: {{challenge.created_by.name}}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
+                        <div class="row mt-3">
+                            {% if player.status == 'pending' %}
+                            <form class="row" action="{% url 'challenge_requests' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" hidden value="{{challenge.id}}" name = "challenge_id"/>
+                                <div class="col-md-4">
+                                    <input type="submit" id = 'accept_challenge' name = 'accept_challenge' 
+                                    class = "text-success fw-bold bg-white border-0" value="Accept Challenge">
+                                    <i class="fa fa-solid fa-circle-check text-success" aria-hidden="true"></i></input>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <input type="submit" id = 'reject_challenge' name = 'reject_challenge' 
+                                    class = "text-danger fw-bold bg-white border-0" value="Reject Challenge">
+                                    <i class="fa fa-solid fa-circle-xmark text-danger" aria-hidden="true"></i></input>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
+                                </div>
+                            </form>
+                            
 
+                            {% elif player.status == 'accepted' %}
+                                {% if challenge.status == 'accepted' %}
+                                    <div class="col-md-7">
+                                        <span class = 'text-success fw-bold'>Challenge Accepted! Awaiting Payment and Schedule</span>
+                                    </div>
+                                {% elif challenge.status == 'rejected' %}
+                                    <div class="col-md-7">
+                                        <span class = 'text-danger fw-bold'>Challenge has been Rejected</span>
+                                    </div>
+                                {% elif challenge.status == 'scheduled' %}
+                                    <div class="col-md-7">
+                                        <span class = 'text-info fw-bold'>Challenge has been Scheduled! Make sure to join in time!</span>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-7">
+                                        <span class = 'text-primary fw-bold'>You have already accepted the Challenge. Awaiting Other Players</span>
+                                    </div>
+                                {% endif %}
+                            
+                            {% elif player.status == 'rejected' %}
+                            <div class="col-md-7">
+                                <span class = 'text-danger fw-bold'>You have Rejected this Challenge. </span>
                             </div>
-                            <div class="col-md-4 text-center">
-                                <span>Status: <span class = "text-uppercase">{{challenge.status}}</span></span>
+                            {% endif %}
+                            <div class="col-md-1 text-center">
+
                             </div>
                             <div class="col-md-4 text-end">
                                 <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
                             </div>
+                            
+                            
+                            
                         </div>
                     </div>
                     <div class="card-footer">
@@ -73,7 +125,7 @@
 
 </div>
 
-<script src = {% static 'js/matches/challenges.js' %}></script>
+<script src = {% static 'js/matches/challenge_requests.js' %}></script>
 
 {% endblock content %}
 

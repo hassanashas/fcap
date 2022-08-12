@@ -59,6 +59,24 @@ def add_new_challenge(request):
 
 
 def challenge_requests(request):
+    if request.method == "POST":
+        challenge_id = int(request.POST['challenge_id'])
+        challenge = Challenge_Participant.objects.get(challenge = challenge_id, player = request.user.account)
+        if 'accept_challenge' in request.POST: 
+            challenge.status = 'accepted' 
+            challenge.save() 
+            # Checking if all Participants have participated in the contest 
+            if not Challenge_Participant.objects.filter(challenge = challenge_id, status='pending'):
+                # Changing Challenge to Accepted 
+                challenge = Challenge.objects.get(id = challenge_id)
+                challenge.status = 'accepted'
+                challenge.save() 
+        else: 
+            challenge.status = 'rejected'
+            challenge.save() 
+            challenge = Challenge.objects.get(id = challenge_id)
+            challenge.status = 'rejected'
+            challenge.save() 
     challenges_list = Challenge.objects.exclude(created_by = request.user.account)
     challenges = [] 
     player = []
@@ -70,11 +88,10 @@ def challenge_requests(request):
         if ch:
             challenges.append(challenge)
             player.append(ch)
-    
-    
+
+    challenges = zip(challenges, player)
     context = {
-        'challenges': challenges,
-        'player': player
+        'challenges': challenges
     }
     # print(challenges)
     return render(request, 'matches/challenge_requests.html', context)
@@ -90,22 +107,33 @@ def get_challenge(request, pk):
     fh = False 
     for challenger in challengers: 
         if challenger.status == 'rejected':
-            messages.error("Challenge has been Rejected by one or more of the Challengers. ")
-            fh = True 
-            break
-    
-    if not fh: 
-        for challenger in challengers:
-            if challenge.status != 'accepted':
-                fh = False
-    if not fh:
-        messages.warning(request, "Awaiting the Response of Challengers. All Challengers must respond by " + str(challenge.expiry_time) + "\
+            messages.error(request, "Challenge has been Rejected by one or more of the Challengers. ")
+            return render(request, 'matches/challenge.html', context)
+    for challenger in challengers:
+        if challenge.status != 'accepted':
+            messages.warning(request, "Awaiting the Response of Challengers. All Challengers must respond by " + str(challenge.expiry_time) + "\
             , otherwise the challenge will be removed. ")
-    else:
-        messages.success(request, "All Challengers have accepted the Challenge! \n"\
+    
+    # Else 
+    messages.success(request, "All Challengers have accepted the Challenge! \n"\
             "Please make the Payment of Rs. " + str(len(challengers) * 50) + " /= to the following account to Schedule your Challenge"\
                 "\nName: Samman Nasir\nEasypaisa Jazzcash\nNumber: 03331234567\n"\
                 "\nAfter the payment, send the screenshot to the given number.")
 
         
     return render(request, 'matches/challenge.html', context)
+
+
+class GetChallengeStatus(APIView):
+    def get(self, request, format=None):
+        accounts = Account.objects.all().order_by('user__username')
+        players_list = []
+        for account in accounts:
+            if not account.user == request.user:
+                players_list.append((account.name, account.user.username))
+        
+        data = {
+            'data': players_list
+        }
+
+        return Response(data)

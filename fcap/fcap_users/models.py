@@ -13,6 +13,9 @@ class Account(models.Model):
     phone = models.CharField(max_length=255, null=True)
     type = models.CharField(max_length=255, default = "member")
 
+    def __str__(self):
+        return str(self.name)
+
 class Match(models.Model):
 
     match_time = models.DateTimeField(null=True)
@@ -29,6 +32,10 @@ class Participant(models.Model):
     player_prev_ratings = models.FloatField(null=True)
     player_new_ratings = models.FloatField(null=True)
 
+    def __str__(self):
+        return str(self.player.name)
+
+
 class Challenge(models.Model):
     match_time = models.DateTimeField(null=True)
     totalPlayers = models.IntegerField(default=1)
@@ -40,3 +47,6 @@ class Challenge_Participant(models.Model):
     player = models.ForeignKey(Account, on_delete=models.CASCADE)
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
     status = models.CharField(max_length=100, default="pending")
+
+    def __str__(self):
+        return str(self.player.name)

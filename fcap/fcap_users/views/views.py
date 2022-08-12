@@ -148,7 +148,7 @@ def loginPage(request):
 
         if user is not None: 
             login(request, user)
-            return redirect('index')
+            return redirect('dashboard')
         else: 
             messages.error(request, "Invalid Roll No or Password")
             return render(request, 'user/login.html')
@@ -254,8 +254,8 @@ class AccountNames(APIView):
 class AccountPointsHistory(APIView):
     def get(self, request, format=None):
         player = Participant.objects.filter(player = Account.objects.get(user = request.user))
-        data = []
-        match_time = []
+        data = [1000]
+        match_time = [player[0].match.match_time]
         for p in player:
             data.append(p.player_new_ratings)
             match_time.append(p.match.match_time)
