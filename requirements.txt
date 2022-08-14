@@ -8,7 +8,6 @@ djangorestframework==3.13.1
 gunicorn==20.1.0
 jmespath==1.0.1
 Markdown==3.4.1
-multielo==0.4.1
 git+https://github.com/djcunningham0/multielo.git
 numpy==1.23.1
 pandas==1.4.3
