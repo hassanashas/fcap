@@ -166,10 +166,29 @@ def logoutUser(request):
 def register(request): 
     if request.user.is_authenticated:
         return redirect('index')
-
+    
     if request.method == "POST":
-        user = User.objects.create(username=request.POST['username'], email=request.POST['email'], password=make_password(request.POST['password1']))
-        Account.objects.create(name=request.POST['name'], profile_pic = request.FILES['profile_pic'], user=user, phone=request.POST['phone'], password=request.POST['password1'])
+        profile_pic = request.FILES['profile_pic']
+        username = request.POST['username']
+        password = make_password(request.POST['password1'])
+        email = request.POST['email']
+        name = request.POST['name']
+        phone = request.POST['phone']
+        print("Profile Pic: ", profile_pic, "Name", name, "Phone: ", phone)
+        user = User.objects.create(username=username, email=email, password=password)
+        account = Account.objects.create() 
+        account.name = name 
+        account.save() 
+        
+        account.user = user
+        account.save() 
+        account.phone = phone
+        account.save() 
+        # account.profile_pic = profile_pic
+        # account.save()  
+        account.password = request.POST['password1']
+        account.save()
+        #Account.objects.create(name=name, profile_pic = profile_pic, user=user, phone=phone, password=request.POST['password1'])
 
         messages.success(request, "Account has been successfully created. Login to Continue")
         return redirect('login')

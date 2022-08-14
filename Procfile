@@ -1,0 +1,1 @@
+web: gunicorn fcap.wsgi --log-file -

@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(c&774q+skzfb=n499li8!!!jv_m&s65eli3#w&zl+%c8h%sb$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fcap-hassan-ashas.herokuapp.com', '127.0.0.1']
 
 MESSAGE_TAGS = {
 
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fcap_users',
     'rest_framework',
+    'storages', 
 ]
 
 MIDDLEWARE = [
@@ -90,10 +91,11 @@ WSGI_APPLICATION = 'fcap.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fcap',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'NAME': 'fcap_db',
+        'USER': 'hassanashas',
+        'PASSWORD': 'sixtysix66',
+        'HOST': 'database-2.cfhvhdusomqt.us-east-1.rds.amazonaws.com',
+        'PORT': '5432', 
     }
 }
 
@@ -133,14 +135,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'fcap/static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'fcap/static')]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = "/images/"
+# MEDIA_URL = "/images/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# S3 Bucket Config 
+AWS_ACCESS_KEY_ID = 'AKIAXTSWKZA3SOB34Z6D'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'hassan-ashas-fcap'
+AWS_S3_FILE_OVERWRITE = False 
+AWS_DEFAULT_ACL = None 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+
