@@ -96,6 +96,27 @@ def challenge_requests(request):
     # print(challenges)
     return render(request, 'matches/challenge_requests.html', context)
 
+def schedule_challenge(request, pk):
+    challenge = Challenge.objects.get(id = pk)
+    challengers = Challenge_Participant.objects.filter(challenge = challenge)
+    context = {
+        'challenge': challenge,
+        'challengers': challengers
+    }
+    if request.method == 'POST':
+        if not request.POST.get('link'):
+            messages.error(request, "You must enter the Link")
+            return render(request, 'matches/schedule_challenge.html', context)
+        
+        challenge.challenge_link = request.POST['link']
+        challenge.status = 'scheduled'
+        challenge.save()
+        return redirect('match_requests')
+
+   
+
+
+    return render(request, 'matches/schedule_challenge.html', context)
 def get_challenge(request, pk):
     challenge = Challenge.objects.get(id = pk)
     challengers = Challenge_Participant.objects.filter(challenge = challenge)

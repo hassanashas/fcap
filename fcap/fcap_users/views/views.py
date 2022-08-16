@@ -6,7 +6,7 @@ from validate_email import validate_email
 from django.contrib.auth.models import User
 from ..forms import AccountForm, UserForm
 from django.contrib.auth import authenticate, login, logout
-from ..models import Account, Participant, Match
+from ..models import Account, Participant, Match, Challenge
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 import json 
@@ -249,6 +249,16 @@ def getData(request):
         "customers": 10,
     }
     return JsonResponse(data)
+
+
+
+def match_requests(request):
+
+    challenges = Challenge.objects.filter(status = 'accepted')
+    context = {
+        'challenges': challenges
+    }
+    return render(request, 'matches/match_requests.html', context)
 
 
 class AccountNames(APIView):

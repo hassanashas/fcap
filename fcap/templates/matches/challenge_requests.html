@@ -41,7 +41,9 @@
                                 <span>Time: {{challenge.match_time}}</span>
                             </div>
                             <div class="col-md-4 text-end">
+                                {% if challenge.status == 'pending' %}
                                 <span>Expires on: {{challenge.expiry_time}}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -89,7 +91,7 @@
                                     </div>
                                 {% elif challenge.status == 'scheduled' %}
                                     <div class="col-md-7">
-                                        <span class = 'text-info fw-bold'>Challenge has been Scheduled! Make sure to join in time!</span>
+                                        <span class = 'text-info fw-bold'>Challenge has been Scheduled! Make sure to join on time!</span>
                                     </div>
                                 {% else %}
                                     <div class="col-md-7">
@@ -112,6 +114,12 @@
                             
                             
                         </div>
+                        {% if challenge.status == 'scheduled' %}
+                            <div class="row">
+                                <span class = "text-danger fw-bold">Join Here: 
+                                    <a class = "text-danger" href="{{challenge.challenge_link}}">{{challenge.challenge_link}}</a></span>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="card-footer">
 

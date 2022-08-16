@@ -93,6 +93,13 @@
             Matches
           </a>
         </li>
+        {% url 'match_requests' as match_requests_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == match_requests_url %}active{% endif %}" href="{{match_requests_url}}">
+            <span data-feather="file-text" class="align-text-bottom"></span>
+            Match Requests
+          </a>
+        </li>
         {% url 'rankings' as rankings_url %}
         <li class="nav-item">
           <a class="nav-link {% if request.path == rankings_url %}active{% endif %}" href="{{rankings_url}}">

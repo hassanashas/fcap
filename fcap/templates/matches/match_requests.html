@@ -8,17 +8,15 @@
     {% include 'partials/_messages.html' %}
 
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'challenges' %}">Challenges</a></li>
-                <li class="breadcrumb-item active" aria-current="page">My Challenges</li>
+                <li class="breadcrumb-item active" aria-current="page">Accepted Challenges</li>
                 </ol>
             </nav>
         </div>
-        <div class="col-md-2">
-            <a href="{% url 'add_new_challenge' %}" class = "btn btn-primary">New Challenge</a>
-        </div>
+       
     </div>
     
     <div id = "challenges_list" class = "mt-3">
@@ -26,15 +24,7 @@
         <div class="row">
             <div class="col-md-10">
                 <div class="card">
-                    {% if challenge.status == 'accepted' %}
-                    <div class="card-header bg-success text-white lead">
-                    {% elif challenge.status == 'rejected' %}
-                    <div class="card-header bg-danger text-white lead">
-                    {% elif challenge.status == 'scheduled' %}
-                    <div class="card-header bg-info text-white lead">
-                    {% else %}
                     <div class="card-header bg-secondary text-white lead">
-                    {% endif %}
                         <div class="row">
                             <div class="col-md-4">
                                 <span>Challenge #{{challenge.id}}</span>
@@ -43,9 +33,7 @@
                                 <span>Time: {{challenge.match_time}}</span>
                             </div>
                             <div class="col-md-4 text-end">
-                                {% if challenge.status == 'pending' %}
                                 <span>Expires on: {{challenge.expiry_time}}</span>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -58,15 +46,26 @@
                                 <span>Status: <span class = "text-uppercase">{{challenge.status}}</span></span>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
+                                <span>Challenged by: {{challenge.created_by.name}}</span>
                             </div>
                         </div>
-                        {% if challenge.status == 'scheduled' %}
-                            <div class="row">
-                                <span class = "text-danger fw-bold">Join Challenge Here: 
-                                    <a class = "text-danger" href="{{challenge.challenge_link}}">{{challenge.challenge_link}}</a></span>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <a href={% url 'schedule_challenge' challenge.id %} 
+                                class = "text-decoration-none text-primary fw-bold bg-white border-0">
+                                    Schedule Challenge 
+                                <i class="fa fa-solid fa-circle-check text-primary" aria-hidden="true"></i></a>
+
+                               
                             </div>
-                        {% endif %}
+                            <div class="col-md-4 text-center">
+                                
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
+                            </div>
+                            
+                        </div>
                     </div>
                     <div class="card-footer">
 
@@ -80,7 +79,7 @@
 
 </div>
 
-<script src = {% static 'js/matches/challenges.js' %}></script>
+<script src = {% static 'js/matches/challenge_requests.js' %}></script>
 
 {% endblock content %}
 
