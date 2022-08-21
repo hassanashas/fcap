@@ -77,8 +77,8 @@
             Challenge Requests
           </a>
         </li>
-        
       </ul>
+      {% if request.user.account.type == 'President' or request.user.account.type == 'Admin' %}
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
         <span>Admin Operations</span>
         <a class="link-secondary" href="#" aria-label="Add a new report">
@@ -114,7 +114,32 @@
             Player Rankings
           </a>
         </li>
+
+        
+
+        
         
       </ul>
+      {% endif %}
+
+
+      {% if request.user.account.type == 'President' %}
+      <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+        <span>Super Admin Operations</span>
+        <a class="link-secondary" href="#" aria-label="Add a new report">
+          <span data-feather="plus-circle" class="align-text-bottom"></span>
+        </a>
+      </h6>
+      <ul class="nav flex-column mb-2">
+        {% url 'all_members' as all_members_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == all_members_url %}active{% endif %}" href="{{all_members_url}}">
+            <span data-feather="file-text" class="align-text-bottom"></span>
+            All Members
+          </a>
+        </li>
+        
+      </ul>
+      {% endif %}
     </div>
   </nav>

@@ -11,6 +11,7 @@ urlpatterns = [
     path('login', views.loginPage, name='login'),
     path('register', views.register, name='register'),
     path('add_match', views.add_match, name='add_match'),
+    path('all_members', views.all_members, name='all_members'),
     path('match_requests', views.match_requests, name='match_requests'),
     path('schedule/<str:pk>', challenges_views.schedule_challenge, name='schedule_challenge'),
     path('scheduled_matches', views.scheduled_matches, name='scheduled_matches'),

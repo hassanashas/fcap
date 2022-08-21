@@ -115,6 +115,7 @@ def schedule_challenge(request, pk):
         challenge.status = 'scheduled'
         challenge.save()
         return redirect('match_requests')
+    return render(request, 'matches/schedule_challenge.html', context)
 
 def add_challenge_match(request, pk):
     challenge = Challenge.objects.get(id = pk)

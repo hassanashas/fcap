@@ -7,11 +7,11 @@ class Account(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, null=True)
     password = models.CharField(max_length=255, null=False, default="blank")
-    profile_pic = models.ImageField(null=True, blank=True)
+    profile_pic = models.ImageField(null=True, blank=True, upload_to="images", default="default_pic.jpg")
     ratings = models.FloatField(default=1000)
     date_joined = models.DateTimeField(auto_now_add=True, null=True)
     phone = models.CharField(max_length=255, null=True)
-    type = models.CharField(max_length=255, default = "member")
+    type = models.CharField(max_length=255, default = "Member")
 
     def __str__(self):
         return str(self.name)

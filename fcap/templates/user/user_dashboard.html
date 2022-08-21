@@ -116,6 +116,7 @@ function makeGraph() {
             datasets: [{
                 label: "{{request.user.account.name}}'s Player Points",
                 data: defaultdata,
+                fill: false,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -132,14 +133,24 @@ function makeGraph() {
                     'rgba(153, 102, 255, 1)',
                     'rgba(255, 159, 64, 1)'
                 ],
-                borderWidth: 1
+                borderWidth: 3,
+                pointBorderWidth: 4,
+                pointBorderColor: '#FF0000'
             }]
         },
         options: {
             scales: {
+                
                 y: {
-                    beginAtZero: true
-                }
+                    beginAtZero: true,
+                    title: {
+                        display: true, 
+                        text: "Rating Points"
+                    }
+                    
+                }, 
+              
+                
             }
         }
     });

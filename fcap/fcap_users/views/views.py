@@ -168,22 +168,20 @@ def register(request):
         return redirect('index')
     
     if request.method == "POST":
-        profile_pic = request.FILES['profile_pic']
+        
         username = request.POST['username']
         password = make_password(request.POST['password1'])
         email = request.POST['email']
         name = request.POST['name']
         phone = request.POST['phone']
-        print("Profile Pic: ", profile_pic, "Name", name, "Phone: ", phone)
         user = User.objects.create(username=username, email=email, password=password)
         account = Account.objects.create() 
         account.name = name 
-        account.save() 
-        
+        if request.FILES.get('profile_pic', None):
+            profile_pic = request.FILES['profile_pic']
+            account.profile_pic = profile_pic
         account.user = user
-        account.save() 
         account.phone = phone
-        account.save() 
         # account.profile_pic = profile_pic
         # account.save()  
         account.password = request.POST['password1']
@@ -196,6 +194,24 @@ def register(request):
 
     context = {}
     return render(request, 'user/register.html', context)
+
+@login_required(login_url='login')
+def all_members(request):
+    
+    if request.method == 'POST':
+        account = Account.objects.get(user__username = request.POST['username'])
+        if account.type == 'Member':
+            account.type = 'Admin'
+        else:
+            account.type = 'Member'
+        account.save()
+    accounts = Account.objects.order_by('type', 'user')
+    context = {
+        'accounts': accounts
+    }
+
+    
+    return render(request, 'user/all_members.html', context)
 
 class EmailVerification(View):
     def post(self, request):
@@ -297,11 +313,12 @@ class AccountPointsHistory(APIView):
     def get(self, request, format=None):
         player = Participant.objects.filter(player = Account.objects.get(user = request.user))
         data = [1000]
-        match_time = [player[0].match.match_time]
+        x = 0
+        match_time = [x]
         for p in player:
             data.append(p.player_new_ratings)
-            match_time.append(p.match.match_time)
-            
+            match_time.append(x)
+            x += 1
         data = {
             'data': data, 
             'time': match_time

@@ -47,7 +47,7 @@
     
   </div>
   <img class="img-profile rounded-circle" src="{{request.user.account.profile_pic.url}}">
-    <span class = "nav_user">Hello {{request.user.account.name}} </span>
+    <span class = "nav_user">Hello {{request.user.account.name}} ({{request.user.account.type}})</span>
     <span><a class="nav-link px-3 nav_user" href="{% url 'logout' %}">Sign out</a></span>
 </header>
 

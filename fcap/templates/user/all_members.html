@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div class="container mt-5">
+        {% include 'partials/_messages.html' %}
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">All Members</li>
+                    </ol>
+                </nav>
+            </div>
+           
+        </div>
+        <div class="container mt-3">
+            {% for account in accounts %}
+            <form action="{% url 'all_members' %}" method="POST">
+                {% csrf_token %}
+                <div class="row mt-2">
+                    <div class="col-md-10">
+                        <input type="text" hidden value="{{account.user.username}}" name = "username"/>
+                        <span class = 'h4'>{{account.name}} - ({{account.user.username}})</span>
+                    </div>
+                    <div class="col-md-2">
+                        {% if account.type == 'Member' %}
+                        <input type="submit" class = 'btn btn-primary' value = "Make Admin">
+                        {% endif %}
+                        {% if account.type == 'President' %}
+                        <input type="submit" class = 'btn btn-secondary' disabled value = "President">
+                        {% endif %}
+                        {% if account.type == 'Admin' %}
+                        <input type="submit" class = 'btn btn-warning' value = "Remove Admin">
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+        
+    </div>
+
+
+
+        
+{% endblock  %}
