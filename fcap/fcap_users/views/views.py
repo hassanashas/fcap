@@ -261,6 +261,15 @@ def match_requests(request):
     return render(request, 'matches/match_requests.html', context)
 
 
+def scheduled_matches(request):
+
+    challenges = Challenge.objects.filter(status = 'scheduled')
+    context = {
+        'challenges': challenges
+    }
+    return render(request, 'matches/scheduled_matches.html', context)
+
+
 class AccountNames(APIView):
     """
     View to list all users in the system.

@@ -11,8 +11,8 @@
         <div class="col-md-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'challenges' %}">Challenges</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Accepted Challenges</li>
+                <li class="breadcrumb-item"><a href="{% url 'scheduled_matches' %}">Challenges</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Scheduled Challenges</li>
                 </ol>
             </nav>
         </div>
@@ -51,10 +51,10 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-4">
-                                <a href={% url 'schedule_challenge' challenge.id %} 
-                                class = "text-decoration-none text-primary fw-bold bg-white border-0">
-                                    Schedule Challenge 
-                                <i class="fa fa-solid fa-circle-check text-primary" aria-hidden="true"></i></a>
+                                <a href={% url 'add_challenge_match' challenge.id %} 
+                                class = "text-decoration-none text-dark fw-bold bg-white border-0">
+                                    Add Match Result 
+                                <i class="fa fa-solid fa-circle-check text-dark" aria-hidden="true"></i></a>
 
                                
                             </div>

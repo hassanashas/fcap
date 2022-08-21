@@ -104,12 +104,14 @@
                                 <span class = 'text-danger fw-bold'>You have Rejected this Challenge. </span>
                             </div>
                             {% endif %}
+                            {% if player.status != 'pending' %}
                             <div class="col-md-1 text-center">
 
                             </div>
                             <div class="col-md-4 text-end">
                                 <a href={% url 'get_challenge' challenge.id %} class = "text-info">View Details <i class="fa fa-arrow-alt-circle-right" aria-hidden="true"></i></a>
                             </div>
+                            {% endif %}
                             
                             
                             

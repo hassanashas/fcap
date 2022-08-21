@@ -100,6 +100,13 @@
             Match Requests
           </a>
         </li>
+        {% url 'scheduled_matches' as scheduled_matches_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == scheduled_matches_url %}active{% endif %}" href="{{scheduled_matches_url}}">
+            <span data-feather="file-text" class="align-text-bottom"></span>
+            Scheduled Matches
+          </a>
+        </li>
         {% url 'rankings' as rankings_url %}
         <li class="nav-item">
           <a class="nav-link {% if request.path == rankings_url %}active{% endif %}" href="{{rankings_url}}">

@@ -43,6 +43,7 @@ class Challenge(models.Model):
     created_by = models.ForeignKey(Account, on_delete=models.CASCADE)
     expiry_time = models.DateTimeField(null=True)
     challenge_link = models.CharField(max_length=500, null=True)
+    match = models.OneToOneField(Match, null=True, on_delete=models.CASCADE)
 
 class Challenge_Participant(models.Model):
     player = models.ForeignKey(Account, on_delete=models.CASCADE)

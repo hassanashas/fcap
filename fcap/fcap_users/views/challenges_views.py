@@ -10,6 +10,9 @@ from django.utils.timezone import make_aware
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import json 
+import numpy as np 
+from multielo import MultiElo
 
 def challenges(request):
     challenges = Challenge.objects.filter(created_by = request.user.account)
@@ -113,7 +116,84 @@ def schedule_challenge(request, pk):
         challenge.save()
         return redirect('match_requests')
 
+def add_challenge_match(request, pk):
+    challenge = Challenge.objects.get(id = pk)
+    challengers = Challenge_Participant.objects.filter(challenge = challenge)
+    context = {
+        'challenge': challenge,
+        'challengers': challengers
+    }
+    if request.method == 'POST':
+        totalPlayers = int(request.POST['players']) + 2
+        # Error Checking 
+        players_list = [] 
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = request.POST['player_score' + str(index)]
+            if username == "None":
+                messages.error(request, "Player Name can't be empty")
+                return render(request, 'matches/add_challenge_match.html', context)
+            if not player_score:
+                messages.error(request, "Player Points can't be empty")
+                return render(request, 'matches/add_challenge_match.html', context)
+            player_score = int(player_score)
+            if player_score < 0 or player_score > 120:
+                messages.error(request, "Player Points must be between 0 and 120")
+                return render(request, 'matches/add_challenge_match.html', context)
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
+            players_list.append((part_account, player_score))
+        
+        if findDuplicate([i[0] for i in players_list]):
+            messages.error(request, "All Players must be Unique in the Match")
+            return render(request, 'matches/add_challenge_match.html', context)
+
+        # Match Creation
+        match = Match.objects.create(totalPlayers=challenge.totalPlayers, match_time=challenge.match_time)
+        
+        players_list = [] 
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = int(request.POST['player_score' + str(index)])
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
+            participant = Participant.objects.create(match=match, player = part_account, player_points = player_score, 
+                                                        player_prev_ratings=part_account.ratings)
+            players_list.append((part_account, player_score, participant))
+
+        # Getting the Winner of the Game
+        players_list.sort(key = lambda x: x[1], reverse=True)
+        winner = players_list[0][0]
+        match.winner = winner
+        match.save()
+        
+        # Getting new Ratings for Players 
+        temp_list = []
+        for player in players_list:
+            temp_list.append(player[0].ratings)
+        points_array = np.array(temp_list)
+        # Creating a MultiElo Instance 
+        n = len(points_array)
+        out = np.sum(points_array * np.arange(n-1, -n, -2) ) / (n*(n-1) / 2)
+        rank_system = MultiElo(k_value = 32 + (out/5))
+
+        new_rank = rank_system.get_new_ratings(points_array)
+
+        for index in range(0, len(new_rank)):
+            players_list[index][0].ratings = round(new_rank[index], 2)
+            players_list[index][0].save()
+            # Saving the Participant's new ratings. 
+            players_list[index][2].player_new_ratings = round(new_rank[index], 2)
+            players_list[index][2].save()
+
+        # Saving the Challenge Status 
+        challenge.status = 'completed'
+        challenge.match = match
+        challenge.save()
+        messages.success(request, "Match has been successfully added")
+        return redirect('index')
+
+    return render(request, 'matches/add_challenge_match.html', context)
    
+
 
 
     return render(request, 'matches/schedule_challenge.html', context)
@@ -131,18 +211,101 @@ def get_challenge(request, pk):
             messages.error(request, "Challenge has been Rejected by one or more of the Challengers. ")
             return render(request, 'matches/challenge.html', context)
     for challenger in challengers:
-        if challenge.status != 'accepted':
+        if challenger.status != 'accepted':
             messages.warning(request, "Awaiting the Response of Challengers. All Challengers must respond by " + str(challenge.expiry_time) + "\
-            , otherwise the challenge will be removed. ")
+            , otherwise the challenge will be discarded. ")
+            return render(request, 'matches/challenge.html', context)
     
-    # Else 
-    messages.success(request, "All Challengers have accepted the Challenge! \n"\
-            "Please make the Payment of Rs. " + str(len(challengers) * 50) + " /= to the following account to Schedule your Challenge"\
-                "\nName: Samman Nasir\nEasypaisa Jazzcash\nNumber: 03331234567\n"\
-                "\nAfter the payment, send the screenshot to the given number.")
+    # # Else 
+    # messages.success(request, "All Challengers have accepted the Challenge! \n"\
+    #         "Please make the Payment of Rs. " + str(len(challengers) * 50) + " /= to the following account to Schedule your Challenge"\
+    #             "\nName: Samman Nasir\nEasypaisa Jazzcash\nNumber: 03331234567\n"\
+    #             "\nAfter the payment, send the screenshot to the given number.")
 
         
     return render(request, 'matches/challenge.html', context)
+
+
+
+
+@login_required(login_url = 'login')
+def add_match(request):
+    accounts = Account.objects.all().order_by('user__username')
+    accounts_list = []
+    for account in accounts:
+        accounts_list.append((account.name, account.user.username))
+    accounts = json.dumps(accounts_list)
+    context = {
+        "accounts": accounts
+    }
+
+    if request.method == "POST": 
+        totalPlayers = int(request.POST['players']) + 1
+        # Error Checking 
+        players_list = [] 
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = request.POST['player_score' + str(index)]
+            
+            if username == "None":
+                messages.error(request, "Player Name can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            if not player_score:
+                messages.error(request, "Player Points can't be empty")
+                return render(request, 'matches/add_match.html', context)
+            player_score = int(player_score)
+            if player_score < 0 or player_score > 120:
+                messages.error(request, "Player Points must be between 0 and 120")
+                return render(request, 'matches/add_match.html', context)
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
+            players_list.append((part_account, player_score))
+
+        if findDuplicate([i[0] for i in players_list]):
+            messages.error(request, "All Players must be Unique in the Match")
+            return render(request, 'matches/add_match.html', context)
+
+        # Match Creation
+        match = Match.objects.create(totalPlayers=totalPlayers-1, match_time=make_aware(datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')))
+        
+        players_list = [] 
+        for index in range(1, totalPlayers):
+            username = request.POST['player_select' + str(index)]
+            player_score = int(request.POST['player_score' + str(index)])
+            part_account = Account.objects.filter(user = User.objects.filter(username=username)[0])[0]
+            participant = Participant.objects.create(match=match, player = part_account, player_points = player_score, 
+                                                        player_prev_ratings=part_account.ratings)
+            players_list.append((part_account, player_score, participant))
+
+        
+        # Getting the Winner of the Game
+        players_list.sort(key = lambda x: x[1], reverse=True)
+        winner = players_list[0][0]
+        match.winner = winner
+        match.save()
+        
+        # Getting new Ratings for Players 
+        temp_list = []
+        for player in players_list:
+            temp_list.append(player[0].ratings)
+        points_array = np.array(temp_list)
+        # Creating a MultiElo Instance 
+        n = len(points_array)
+        out = np.sum(points_array * np.arange(n-1, -n, -2) ) / (n*(n-1) / 2)
+        rank_system = MultiElo(k_value = 32 + (out/5))
+
+        new_rank = rank_system.get_new_ratings(points_array)
+        for index in range(0, len(new_rank)):
+            players_list[index][0].ratings = round(new_rank[index], 2)
+            players_list[index][0].save()
+            # Saving the Participant's new ratings. 
+            players_list[index][2].player_new_ratings = round(new_rank[index], 2)
+            players_list[index][2].save()
+        messages.success(request, "Match has been successfully added")
+        return redirect('index')
+
+    return render(request, 'matches/add_match.html', context)
+
+
 
 
 class GetChallengeStatus(APIView):
