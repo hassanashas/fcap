@@ -112,9 +112,8 @@ def add_match(request):
         points_array = np.array(temp_list)
         # Creating a MultiElo Instance 
         n = len(points_array)
-        out = np.sum(points_array * np.arange(n-1, -n, -2) ) / (n*(n-1) / 2)
-        rank_system = MultiElo(k_value = 32 + (out/5))
-
+        # out = np.sum(points_array * np.arange(n-1, -n, -2) ) / (n*(n-1) / 2)
+        rank_system = MultiElo(k_value = 32)
         new_rank = rank_system.get_new_ratings(points_array)
         for index in range(0, len(new_rank)):
             players_list[index][0].ratings = round(new_rank[index], 2)
